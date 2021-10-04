@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Employee index{% endblock %}
+
+{% block body %}
+{{ parent() }}
+    <h1 class="text-center">Annuaire Employés</h1>
+
+    {% if is_granted('ROLE_RH') %}    
+             <a href="{{ path('employee_new') }}"><button class="btn btn-success">Ajouter un employé</button></a>
+    {% endif %}
+    
+        <div class="container mt-3">
+            <div class="row row-cols-4">
+                {% for employee in employees %}
+                    <div class="col">
+                        <div class="card" style="width: 18rem;">
+                           <img src="{{ asset('image/amployee/' ~ employee.employeePhoto)}}">
+                                 <div class="card-body">
+                                    <h5 class="card-title">{{ employee.employeeName }} {{ employee.employeeFirstName }}</h5>
+                                    <p class="card-text">{{ employee.email }}</p>
+                                    <p class="card-text">{{ employee.sector }}</p>
+                                    <p class="card-text">{{ employee.contract }}</p>
+                                        <div class="card-footer">
+                                        {% if employee.endContract %}
+                                            <small class="text-muted">Contrat jusqu'au : {{ employee.endContract ? employee.endContract|date('Y-m-d') : '' }}</small>
+                                        {% endif %}
+                                        </div>
+                                                    {% if app.user %}
+                                <a href="{{ path('employee_show', {'id': employee.id}) }}"><button class="btn btn-secondary">Voir fiche</button></a>
+                            {% endif %}
+                            {% if is_granted('ROLE_RH') %}
+                                <a href="{{ path('employee_edit', {'id': employee.id}) }}"><button class="btn btn-warning">edit</button></a>
+                            {% endif %}
+                                </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <h3>Pas d'employé pour l'instant....</h3>
+                {% endfor %}
+            </div>
+        </div>
+
+{% endblock %}
